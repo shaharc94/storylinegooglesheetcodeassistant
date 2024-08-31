@@ -1,0 +1,36 @@
+
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Code Assistant</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Storyline Variables to Google Sheets Code Assistant</h1>
+    <div class="input-group">
+      <label for="variable-count">מספר המשתנים:</label>
+      <input type="number" id="variable-count" value="0">
+    </div>
+    <div id="variable-names"></div>
+    <div class="input-group">
+      <label for="web-app-url">כתובת URL של יישום האינטרנט של Google Apps Script:</label>
+      <input type="text" id="web-app-url">
+    </div>
+    <div id="app-script-code-container" class="code-container">
+      <h2>קוד Google Apps Script:</h2>
+      <textarea id="app-script-code" readonly></textarea>
+      <button id="copy-app-script" class="copy-button">העתק קוד</button>
+    </div>
+    <div id="storyline-code-container" class="code-container">
+      <h2>קוד JavaScript של Storyline 360:</h2>
+      <textarea id="storyline-code" readonly></textarea>
+      <button id="copy-storyline-code" class="copy-button">העתק קוד</button>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
