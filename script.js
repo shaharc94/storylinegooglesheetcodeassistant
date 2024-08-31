@@ -65,6 +65,11 @@ document.body.appendChild(form);
 
 var xhr = new XMLHttpRequest();
 xhr.open(form.method, form.action, true);
+xhr.onload = function() {
+  if (xhr.status >= 200 && xhr.status < 300) {
+    console.log('Data transferred successfully');
+  }
+};
 xhr.send(new FormData(form));`;
     storylineCodeTextarea.value = storylineCode;
   }
