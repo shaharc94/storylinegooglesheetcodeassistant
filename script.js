@@ -86,6 +86,11 @@ xhr.send(new FormData(form));`;
     document.execCommand('copy');
     notificationElement.innerHTML = 'הטקסט הועתק ללוח!';
     notificationElement.style.display = 'block';
+
+    // Hide the notification after 2.5 seconds
+    setTimeout(function() {
+      notificationElement.style.display = 'none';
+    }, 2500);
   }
 
   copyAppScriptButton.addEventListener('click', function() {
