@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const storylineCodeTextarea = document.getElementById('storyline-code');
   const copyAppScriptButton = document.getElementById('copy-app-script');
   const copyStorylineCodeButton = document.getElementById('copy-storyline-code');
+  const notification = document.getElementById('notification');
 
   let variableCount = 0;
   let variableNames = [];
@@ -67,7 +68,8 @@ var xhr = new XMLHttpRequest();
 xhr.open(form.method, form.action, true);
 xhr.onload = function() {
   if (xhr.status >= 200 && xhr.status < 300) {
-    console.log('Data transferred successfully');
+    document.getElementById('notification').innerHTML = 'הנתונים הועברו בהצלחה!';
+    document.getElementById('notification').style.display = 'block';
   }
 };
 xhr.send(new FormData(form));`;
