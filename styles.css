@@ -69,3 +69,12 @@ textarea {
 .copy-button:hover {
   background-color: #0056b3;
 }
+
+.notification {
+  margin-top: 20px;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #dff0d8;
+  color: #3c763d;
+  display: none; /* Hidden by default */
+}
