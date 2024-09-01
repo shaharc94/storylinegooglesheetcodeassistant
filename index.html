@@ -22,14 +22,19 @@
     <div id="app-script-code-container" class="code-container">
       <h2>קוד Google Apps Script:</h2>
       <textarea id="app-script-code" readonly></textarea>
-      <button id="copy-app-script" class="copy-button">העתק קוד</button>
+      <div class="button-container">
+        <div id="app-script-notification" class="notification"></div>
+        <button id="copy-app-script" class="copy-button">העתק קוד</button>
+      </div>
     </div>
     <div id="storyline-code-container" class="code-container">
       <h2>קוד JavaScript של Storyline 360:</h2>
       <textarea id="storyline-code" readonly></textarea>
-      <button id="copy-storyline-code" class="copy-button">העתק קוד</button>
+      <div class="button-container">
+        <div id="storyline-notification" class="notification"></div>
+        <button id="copy-storyline-code" class="copy-button">העתק קוד</button>
+      </div>
     </div>
-    <div id="notification" class="notification"></div> <!-- Notification area -->
   </div>
   <script src="script.js"></script>
 </body>
