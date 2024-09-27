@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const copyStorylineCodeButton = document.getElementById('copy-storyline-code');
   const appScriptNotification = document.getElementById('app-script-notification');
   const storylineNotification = document.getElementById('storyline-notification');
+  const includeDateCheckbox = document.getElementById('include-date');
 
   let variableCount = 0;
   let variableNames = [];
@@ -36,21 +37,25 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
+  function getCurrentDate() {
+    const today = new Date();
+    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const year = today.getFullYear();
+    return day + '/' + month + '/' + year;
+  }
+
   function generateAppScriptCode() {
-    const appScriptCode = `function doPost(e) {
+    let appScriptCode = `function doPost(e) {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   
   ${variableNames.map(name => `var ${name} = e.parameter.${name};`).join('\n  ')}
 
-  // Get today's date in European format (DD/MM/YYYY)
-  var today = new Date();
-  var day = String(today.getDate()).padStart(2, '0');
-  var month = String(today.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-  var year = today.getFullYear();
-  var europeanDate = day + '/' + month + '/' + year;
+  // Get today's date if the checkbox is checked
+  ${includeDateCheckbox.checked ? `var date = '${getCurrentDate()}';` : ''}
 
-  // Append a row with the variables and the date
-  sheet.appendRow([${variableNames.join(', ')}, europeanDate]);
+  // Append a row with the variables ${includeDateCheckbox.checked ? 'and the date' : ''}
+  sheet.appendRow([${variableNames.join(', ')}${includeDateCheckbox.checked ? ', date' : ''}]);
   return ContentService.createTextOutput("Success");
 }`;
     appScriptCodeTextarea.value = appScriptCode;
@@ -58,32 +63,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function generateStorylineCode() {
     if (!webAppUrlInput.value) return;
-    const storylineCode = `var player = GetPlayer();
+    let storylineCode = `var player = GetPlayer();
 
 var form = document.createElement("form");
 form.method = "POST";
 form.action = "${webAppUrlInput.value}";
 form.style.display = "none";
 
-// Get today's date in European format (DD/MM/YYYY)
-var today = new Date();
-var day = String(today.getDate()).padStart(2, '0');
-var month = String(today.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-var year = today.getFullYear();
-var europeanDate = day + '/' + month + '/' + year;
-
-// Add the date to the form
-var dateInput = document.createElement("input");
-dateInput.type = "hidden";
-dateInput.name = "Date";
-dateInput.value = europeanDate;
-form.appendChild(dateInput);
-
 ${variableNames.map(name => `var input_${name} = document.createElement("input");
 input_${name}.type = "hidden";
 input_${name}.name = "${name}";
 input_${name}.value = player.GetVar("${name}");
 form.appendChild(input_${name});`).join('\n')}
+
+// Add today's date if the checkbox is checked
+${includeDateCheckbox.checked ? `
+var dateInput = document.createElement("input");
+dateInput.type = "hidden";
+dateInput.name = "Date";
+dateInput.value = "${getCurrentDate()}";
+form.appendChild(dateInput);` : ''}
 
 document.body.appendChild(form);
 
@@ -132,6 +131,10 @@ xhr.send(new FormData(form));`;
   });
 
   webAppUrlInput.addEventListener('input', generateStorylineCode);
+  includeDateCheckbox.addEventListener('change', function() {
+    generateAppScriptCode();
+    generateStorylineCode();
+  });
 
   updateVariableNames();
 });
