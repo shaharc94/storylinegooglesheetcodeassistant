@@ -14,33 +14,25 @@
       <label for="variable-count">מספר המשתנים:</label>
       <input type="number" id="variable-count" value="0">
     </div>
-    
+
     <!-- Important note about case sensitivity -->
     <div class="note">
-      <p> 
-        <center>
-          <b>חשוב מאוד ⚠️</b><br> 
-          יש לוודא ששמות המשתנים שמוזנים בטופס יהיו כתובים בדיוק כמו שהם כתובים בסטוריליין (case sensitive).
-        </center>
-      </p>
-    </div>
-
-    <!-- Important note about the date variable -->
-    <div class="note">
-      <p> 
-        <center>
-          <b>הערה חשובה 📅</b><br>
-          המשתנה האחרון תמיד יכיל את תאריך היום בפורמט DD/MM/YYYY.
-        </center>
-      </p>
+      <p> <center><b>חשוב מאוד ⚠️</b><br> יש לוודא ששמות המשתנים שמוזנים בטופס יהיו כתובים בדיוק כמו שהם כתובים בסטוריליין (case sensitive).</center></p>
     </div>
 
     <div id="variable-names"></div>
-    
+
+    <!-- Checkbox to include today's date -->
+    <div class="input-group">
+      <label for="include-date">הוסף תאריך של היום כמשתנה האחרון:</label>
+      <input type="checkbox" id="include-date">
+    </div>
+
     <div class="input-group">
       <label for="web-app-url">כתובת URL של יישום האינטרנט של Google Apps Script:</label>
       <input type="text" id="web-app-url">
     </div>
+
     <div id="app-script-code-container" class="code-container">
       <h2>קוד Google Apps Script:</h2>
       <textarea id="app-script-code" readonly></textarea>
@@ -49,6 +41,7 @@
         <button id="copy-app-script" class="copy-button">העתק קוד</button>
       </div>
     </div>
+
     <div id="storyline-code-container" class="code-container">
       <h2>קוד JavaScript של Storyline 360:</h2>
       <textarea id="storyline-code" readonly></textarea>
