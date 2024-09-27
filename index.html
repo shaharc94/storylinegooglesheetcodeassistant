@@ -6,6 +6,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Storyline variables to Google Sheets Code Assistant</title>
   <link rel="stylesheet" href="styles.css">
+  <style>
+    .input-group {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .input-group label {
+      margin-left: 5px;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
@@ -17,14 +28,14 @@
 
     <!-- Important note about case sensitivity -->
     <div class="note">
-      <p> <center><b>חשוב מאוד ⚠️</b><br> יש לוודא ששמות המשתנים שמוזנים בטופס יהיו כתובים בדיוק כמו שהם כתובים בסטוריליין (case sensitive).</center></p>
+      <p><center><b>חשוב מאוד ⚠️</b><br> יש לוודא ששמות המשתנים שמוזנים בטופס יהיו כתובים בדיוק כמו שהם כתובים בסטוריליין (case sensitive).</center></p>
     </div>
 
     <div id="variable-names"></div>
 
     <!-- Checkbox to include today's date on the same line -->
-    <div class="input-group" style="display: flex; align-items: right;">
-      <label for="include-date" style="margin-right: 8px;">הוסף תאריך של היום כמשתנה האחרון</label>
+    <div class="input-group">
+      <label for="include-date">הוסף תאריך של היום כמשתנה האחרון</label>
       <input type="checkbox" id="include-date">
     </div>
 
