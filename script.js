@@ -42,7 +42,15 @@ document.addEventListener('DOMContentLoaded', function() {
   
   ${variableNames.map(name => `var ${name} = e.parameter.${name};`).join('\n  ')}
 
-  sheet.appendRow([${variableNames.join(', ')}]);
+  // Get today's date in European format (DD/MM/YYYY)
+  var today = new Date();
+  var day = String(today.getDate()).padStart(2, '0');
+  var month = String(today.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+  var year = today.getFullYear();
+  var europeanDate = day + '/' + month + '/' + year;
+
+  // Append a row with the variables and the date
+  sheet.appendRow([${variableNames.join(', ')}, europeanDate]);
   return ContentService.createTextOutput("Success");
 }`;
     appScriptCodeTextarea.value = appScriptCode;
@@ -56,6 +64,20 @@ var form = document.createElement("form");
 form.method = "POST";
 form.action = "${webAppUrlInput.value}";
 form.style.display = "none";
+
+// Get today's date in European format (DD/MM/YYYY)
+var today = new Date();
+var day = String(today.getDate()).padStart(2, '0');
+var month = String(today.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+var year = today.getFullYear();
+var europeanDate = day + '/' + month + '/' + year;
+
+// Add the date to the form
+var dateInput = document.createElement("input");
+dateInput.type = "hidden";
+dateInput.name = "Date";
+dateInput.value = europeanDate;
+form.appendChild(dateInput);
 
 ${variableNames.map(name => `var input_${name} = document.createElement("input");
 input_${name}.type = "hidden";
