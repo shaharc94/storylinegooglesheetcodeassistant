@@ -37,14 +37,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
-  function getCurrentDate() {
-    const today = new Date();
-    const day = String(today.getDate()).padStart(2, '0');
-    const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-    const year = today.getFullYear();
-    return day + '/' + month + '/' + year;
-  }
-
   function generateAppScriptCode() {
     let appScriptCode = `function doPost(e) {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
@@ -52,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
   ${variableNames.map(name => `var ${name} = e.parameter.${name};`).join('\n  ')}
 
   // Get today's date if the checkbox is checked
-  ${includeDateCheckbox.checked ? `var date = '${getCurrentDate()}';` : ''}
+  ${includeDateCheckbox.checked ? `var date = new Date().toLocaleDateString('he-IL');` : ''}
 
   // Append a row with the variables ${includeDateCheckbox.checked ? 'and the date' : ''}
   sheet.appendRow([${variableNames.join(', ')}${includeDateCheckbox.checked ? ', date' : ''}]);
@@ -76,12 +68,12 @@ input_${name}.name = "${name}";
 input_${name}.value = player.GetVar("${name}");
 form.appendChild(input_${name});`).join('\n')}
 
-// Add today's date if the checkbox is checked
+// Add today's date when the form is submitted if the checkbox is checked
 ${includeDateCheckbox.checked ? `
 var dateInput = document.createElement("input");
 dateInput.type = "hidden";
 dateInput.name = "Date";
-dateInput.value = "${getCurrentDate()}";
+dateInput.value = new Date().toLocaleDateString('he-IL');
 form.appendChild(dateInput);` : ''}
 
 document.body.appendChild(form);
