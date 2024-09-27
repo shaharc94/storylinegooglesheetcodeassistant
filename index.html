@@ -13,7 +13,12 @@
       margin-bottom: 10px;
     }
 
-    .input-group label {
+    .input-group-inline {
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .input-group-inline input {
       margin-left: 5px;
     }
   </style>
@@ -34,7 +39,7 @@
     <div id="variable-names"></div>
 
     <!-- Checkbox to include today's date on the same line -->
-    <div class="input-group">
+    <div class="input-group-inline">
       <label for="include-date">הוסף תאריך של היום כמשתנה האחרון</label>
       <input type="checkbox" id="include-date">
     </div>
