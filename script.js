@@ -38,20 +38,62 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function generateAppScriptCode() {
-    let appScriptCode = `function doPost(e) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  
-  ${variableNames.map(name => `var ${name} = e.parameter.${name};`).join('\n  ')}
+  let appScriptCode = `// Function to handle GET requests (fetch data from the sheet)
+function doGet(e) {
+  try {
+    const spreadsheetId = '1JSR_fgvbNULsClVPMJGMjb_Ea2Dmr6NSle94lj1hK30'; // Replace with your Spreadsheet ID
+    const sheetName = 'data'; // Replace with your sheet name
 
-  // Get today's date if the checkbox is checked
-  ${includeDateCheckbox.checked ? `var date = new Date().toLocaleDateString('he-IL');` : ''}
+    const sheet = SpreadsheetApp.openById(spreadsheetId).getSheetByName(sheetName);
+    const [headers, ...rows] = sheet.getDataRange().getValues();
 
-  // Append a row with the variables ${includeDateCheckbox.checked ? 'and the date' : ''}
-  sheet.appendRow([${variableNames.join(', ')}${includeDateCheckbox.checked ? ', date' : ''}]);
-  return ContentService.createTextOutput("Success");
-}`;
-    appScriptCodeTextarea.value = appScriptCode;
+    // Map rows to JSON objects with headers as keys
+    const data = rows.map(row => Object.fromEntries(headers.map((header, index) => [header, row[index]])));
+
+    // Set up CORS headers for GET request
+    return ContentService.createTextOutput(JSON.stringify(data))
+      .setMimeType(ContentService.MimeType.JSON)
+      .setHeader('Access-Control-Allow-Origin', '*')
+      .setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+      .setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  } catch (error) {
+    Logger.log(error);
+    return ContentService.createTextOutput(JSON.stringify([])).setMimeType(ContentService.MimeType.JSON);
   }
+}
+
+// Function to handle POST requests (add data to the sheet)
+function doPost(e) {
+  try {
+    const spreadsheetId = '1JSR_fgvbNULsClVPMJGMjb_Ea2Dmr6NSle94lj1hK30'; // Replace with your Spreadsheet ID
+    const sheetName = 'data'; // Replace with your sheet name
+
+    const sheet = SpreadsheetApp.openById(spreadsheetId).getSheetByName(sheetName);
+
+    // Extract parameters from the POST request
+    const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0]; // Get the headers
+    const row = headers.map(header => e.parameter[header] || ''); // Map the headers to incoming parameters
+
+    // Append the new row to the sheet
+    sheet.appendRow(row);
+
+    // Set up CORS headers for POST request
+    return ContentService.createTextOutput('Success')
+      .setMimeType(ContentService.MimeType.TEXT)
+      .setHeader('Access-Control-Allow-Origin', '*')
+      .setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+      .setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  } catch (error) {
+    Logger.log(error);
+    return ContentService.createTextOutput('Error: ' + error.message)
+      .setMimeType(ContentService.MimeType.TEXT)
+      .setHeader('Access-Control-Allow-Origin', '*')
+      .setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+      .setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  }
+}`;
+  appScriptCodeTextarea.value = appScriptCode;
+}
 
   function generateStorylineCode() {
     if (!webAppUrlInput.value) return;
