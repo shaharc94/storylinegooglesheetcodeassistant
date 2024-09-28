@@ -9,12 +9,13 @@ document.addEventListener('DOMContentLoaded', function() {
   const appScriptNotification = document.getElementById('app-script-notification');
   const storylineNotification = document.getElementById('storyline-notification');
   const includeDateCheckbox = document.getElementById('include-date');
-  const spreadsheetIdInput = document.getElementById('spreadsheet-id'); // New input
-  const sheetNameInput = document.getElementById('sheet-name'); // New input
+  const spreadsheetIdInput = document.getElementById('spreadsheet-id'); // Spreadsheet ID input field
+  const sheetNameInput = document.getElementById('sheet-name'); // Sheet name input field
 
   let variableCount = 0;
   let variableNames = [];
 
+  // Function to update variable name inputs dynamically
   function updateVariableNames() {
     variableNamesContainer.innerHTML = '';
     for (let i = 0; i < variableCount; i++) {
@@ -39,10 +40,18 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
+  // Function to generate Google Apps Script code based on input values
   function generateAppScriptCode() {
-    const spreadsheetId = spreadsheetIdInput.value.trim();
-    const sheetName = sheetNameInput.value.trim();
+    const spreadsheetId = spreadsheetIdInput.value.trim(); // Get the spreadsheet ID from input
+    const sheetName = sheetNameInput.value.trim(); // Get the sheet name from input
 
+    // Check if both Spreadsheet ID and Sheet Name are provided
+    if (!spreadsheetId || !sheetName) {
+      appScriptCodeTextarea.value = 'Please enter both Spreadsheet ID and Sheet Name.';
+      return;
+    }
+
+    // Generate the Google Apps Script code
     let appScriptCode = `// Function to handle GET requests (fetch data from the sheet)
 function doGet(e) {
   try {
@@ -81,11 +90,76 @@ function doPost(e) {
       .setHeader('Access-Control-Allow-Headers', 'Content-Type');
   }
 }`;
+
+    // Update the textarea with the generated code
     appScriptCodeTextarea.value = appScriptCode;
   }
 
-  // Other event listeners and functions remain the same...
+  // Function to generate Storyline code
+  function generateStorylineCode() {
+    if (!webAppUrlInput.value) return;
+    let storylineCode = `var player = GetPlayer();
 
+var form = document.createElement("form");
+form.method = "POST";
+form.action = "${webAppUrlInput.value}";
+form.style.display = "none";
+
+${variableNames.map(name => `var input_${name} = document.createElement("input");
+input_${name}.type = "hidden";
+input_${name}.name = "${name}";
+input_${name}.value = player.GetVar("${name}");
+form.appendChild(input_${name});`).join('\n')}
+
+// Add today's date when the form is submitted if the checkbox is checked
+${includeDateCheckbox.checked ? `
+var dateInput = document.createElement("input");
+dateInput.type = "hidden";
+dateInput.name = "Date";
+dateInput.value = new Date().toLocaleDateString('he-IL');
+form.appendChild(dateInput);` : ''}
+
+document.body.appendChild(form);
+
+var xhr = new XMLHttpRequest();
+xhr.open(form.method, form.action, true);
+xhr.onload = function() {
+  if (xhr.status >= 200 && xhr.status < 300) {
+    var notificationElement = document.getElementById('storyline-notification');
+    if (notificationElement) {
+      notificationElement.innerHTML = 'הנתונים הועברו בהצלחה!';
+      notificationElement.style.display = 'block';
+    }
+    console.log('Data submitted successfully');
+  }
+};
+xhr.send(new FormData(form));`;
+    storylineCodeTextarea.value = storylineCode;
+  }
+
+  // Function to copy text to clipboard
+  function copyToClipboard(textarea, notificationElement) {
+    textarea.select();
+    document.execCommand('copy');
+    notificationElement.innerHTML = 'הטקסט הועתק ללוח!';
+    notificationElement.style.display = 'block';
+
+    // Hide the notification after 2.5 seconds
+    setTimeout(function() {
+      notificationElement.style.display = 'none';
+    }, 2500);
+  }
+
+  // Event listeners for copy buttons
+  copyAppScriptButton.addEventListener('click', function() {
+    copyToClipboard(appScriptCodeTextarea, appScriptNotification);
+  });
+
+  copyStorylineCodeButton.addEventListener('click', function() {
+    copyToClipboard(storylineCodeTextarea, storylineNotification);
+  });
+
+  // Event listener for variable count input
   variableCountInput.addEventListener('input', function(e) {
     variableCount = parseInt(e.target.value, 10) || 0;
     variableNames = Array(variableCount).fill('');
@@ -94,14 +168,19 @@ function doPost(e) {
     generateStorylineCode();
   });
 
+  // Event listeners for spreadsheet ID and sheet name inputs
+  spreadsheetIdInput.addEventListener('input', generateAppScriptCode);
+  sheetNameInput.addEventListener('input', generateAppScriptCode);
+
+  // Event listener for web app URL input
   webAppUrlInput.addEventListener('input', generateStorylineCode);
+
+  // Event listener for include date checkbox
   includeDateCheckbox.addEventListener('change', function() {
     generateAppScriptCode();
     generateStorylineCode();
   });
 
-  spreadsheetIdInput.addEventListener('input', generateAppScriptCode); // Trigger generation on spreadsheet ID change
-  sheetNameInput.addEventListener('input', generateAppScriptCode); // Trigger generation on sheet name change
-
+  // Initialize the variable name inputs
   updateVariableNames();
 });
